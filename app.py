@@ -1,8 +1,5 @@
 import time
 
-# =====================
-# Book Catalog Data
-# =====================
 books = [
     {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
     {"title": "To Kill a Mockingbird", "author": "Harper Lee"},
@@ -45,12 +42,7 @@ books = [
     {"title": "The Color Purple", "author": "Alice Walker"},
 ]
 
-# Sorted list for binary search
 sorted_books = sorted(books, key=lambda b: b["title"].lower())
-
-# =====================
-# Search Functions
-# =====================
 
 def linear_search(book_list, query, search_by):
     for book in book_list:
@@ -71,10 +63,6 @@ def binary_search(sorted_list, query):
             high = mid - 1
     return None
 
-# =====================
-# Main Program
-# =====================
-
 print("=" * 50)
 print("      📚 Smart Book Retrieval System")
 print("=" * 50)
@@ -93,10 +81,6 @@ else:
     print("Invalid choice!")
     exit()
 
-# =====================
-# Run Searches
-# =====================
-
 # Linear Search
 start = time.perf_counter()
 result1 = linear_search(books, query, search_by)
@@ -110,10 +94,6 @@ if search_by == "title":
 else:
     result2 = None
     binary_time = None
-
-# =====================
-# Display Results
-# =====================
 
 print("\n" + "=" * 50)
 print("        Search Results")
