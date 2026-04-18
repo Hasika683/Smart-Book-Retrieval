@@ -1,4 +1,7 @@
 import time
+from flask import Flask, render_template, request
+
+app = Flask(__name__)
 
 books = [
     {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
@@ -40,14 +43,15 @@ books = [
     {"title": "Beloved", "author": "Toni Morrison"},
     {"title": "Invisible Man", "author": "Ralph Ellison"},
     {"title": "The Color Purple", "author": "Alice Walker"},
+    {"title": "Smart Book Retrieval", "author": "Sravya & Hasika"},
 ]
 
 sorted_books = sorted(books, key=lambda b: b["title"].lower())
 
+def normalize(text):
+    return text.lower().replace(".", "").replace(" ", "")
+
 def linear_search(book_list, query, search_by):
-    def normalize(text):
-        return text.lower().replace(".", "").replace(" ", "")
-    
     for book in book_list:
         if normalize(book[search_by]) == normalize(query):
             return book
@@ -66,54 +70,44 @@ def binary_search(sorted_list, query):
             high = mid - 1
     return None
 
-print("=" * 50)
-print("      📚 Smart Book Retrieval System")
-print("=" * 50)
-print("\nSearch by:")
-print("  1. Book Title")
-print("  2. Author Name")
-choice = input("\nEnter choice (1 or 2): ").strip()
-
-if choice == "1":
-    search_by = "title"
-    query = input("Enter book title: ").strip()
-elif choice == "2":
-    search_by = "author"
-    query = input("Enter author name: ").strip()
-else:
-    print("Invalid choice!")
-    exit()
-
-# Linear Search
-start = time.perf_counter()
-result1 = linear_search(books, query, search_by)
-linear_time = (time.perf_counter() - start) * 1000
-
-# Binary Search (title only)
-if search_by == "title":
-    start = time.perf_counter()
-    result2 = binary_search(sorted_books, query)
-    binary_time = (time.perf_counter() - start) * 1000
-else:
-    result2 = None
+@app.route("/", methods=["GET", "POST"])
+def index():
+    result = None
+    linear_time = None
     binary_time = None
+    conclusion = None
+    query = ""
+    search_by = "title"
 
-print("\n" + "=" * 50)
-print("        Search Results")
-print("=" * 50)
+    if request.method == "POST":
+        query = request.form.get("query", "").strip()
+        search_by = request.form.get("search_by", "title")
 
-if result1:
-    print(f"\n✅ Book found!")
-    print(f"   Title  : {result1['title']}")
-    print(f"   Author : {result1['author']}")
-else:
-    print(f"\n❌ No match found for '{query}'")
+        start = time.perf_counter()
+        result = linear_search(books, query, search_by)
+        linear_time = round((time.perf_counter() - start) * 1000, 6)
 
-print("\n--- Time Taken ---")
-print(f"  Linear Search  : {linear_time:.6f} ms  | O(n)")
+        if search_by == "title":
+            start = time.perf_counter()
+            binary_search(sorted_books, query)
+            binary_time = round((time.perf_counter() - start) * 1000, 6)
 
-if binary_time is not None:
-    print(f"  Binary Search  : {binary_time:.6f} ms  | O(log n)")
-else:
-    print(f"  Binary Search  : N/A               | O(log n) | title search only")
+        if binary_time is not None:
+            if binary_time < linear_time:
+                conclusion = "Binary Search is faster!"
+            else:
+                conclusion = "Linear Search is faster this time!"
+        else:
+            conclusion = "Only Linear Search works for author search."
 
+    return render_template("index.html",
+        result=result,
+        linear_time=linear_time,
+        binary_time=binary_time,
+        conclusion=conclusion,
+        query=query,
+        search_by=search_by
+    )
+
+if __name__ == "__main__":
+    app.run(debug=True)
