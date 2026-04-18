@@ -45,8 +45,11 @@ books = [
 sorted_books = sorted(books, key=lambda b: b["title"].lower())
 
 def linear_search(book_list, query, search_by):
+    def normalize(text):
+        return text.lower().replace(".", "").replace(" ", "")
+    
     for book in book_list:
-        if book[search_by].lower() == query.lower():
+        if normalize(book[search_by]) == normalize(query):
             return book
     return None
 
