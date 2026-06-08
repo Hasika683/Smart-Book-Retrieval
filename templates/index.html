@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Book Retrieval System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 600px;
+            margin: auto;
+            box-shadow: 0px 0px 10px gray;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .conclusion {
+            font-weight: bold;
+            color: green;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Smart Book Retrieval System</h1>
+
+    <form method="POST">
+
+        <label>Search By:</label>
+
+        <select name="search_by">
+            <option value="title" {% if search_by=="title" %}selected{% endif %}>
+                Book Title
+            </option>
+
+            <option value="author" {% if search_by=="author" %}selected{% endif %}>
+                Author
+            </option>
+        </select>
+
+        <input
+            type="text"
+            name="query"
+            placeholder="Enter Book Title or Author"
+            value="{{ query }}"
+            required
+        >
+
+        <button type="submit">Search</button>
+
+    </form>
+
+    {% if result %}
+
+    <div class="result">
+
+        <h3>Book Found</h3>
+
+        <p><strong>Title:</strong> {{ result.title }}</p>
+
+        <p><strong>Author:</strong> {{ result.author }}</p>
+
+        <table>
+            <tr>
+                <th>Algorithm</th>
+                <th>Time Complexity</th>
+                <th>Time Taken (ms)</th>
+            </tr>
+
+            <tr>
+                <td>Linear Search</td>
+                <td>O(n)</td>
+                <td>{{ linear_time }}</td>
+            </tr>
+
+            {% if binary_time is not none %}
+            <tr>
+                <td>Binary Search</td>
+                <td>O(log n)</td>
+                <td>{{ binary_time }}</td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <p class="conclusion">{{ conclusion }}</p>
+
+    </div>
+
+    {% elif linear_time is not none %}
+
+    <div class="result">
+        <h3>Book Not Found</h3>
+
+        <table>
+            <tr>
+                <th>Algorithm</th>
+                <th>Time Complexity</th>
+                <th>Time Taken (ms)</th>
+            </tr>
+
+            <tr>
+                <td>Linear Search</td>
+                <td>O(n)</td>
+                <td>{{ linear_time }}</td>
+            </tr>
+
+            {% if binary_time is not none %}
+            <tr>
+                <td>Binary Search</td>
+                <td>O(log n)</td>
+                <td>{{ binary_time }}</td>
+            </tr>
+            {% endif %}
+        </table>
+
+        <p class="conclusion">{{ conclusion }}</p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
