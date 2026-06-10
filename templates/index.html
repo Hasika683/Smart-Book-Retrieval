@@ -75,6 +75,7 @@
     {% elif linear_time is not none %}
 
     <div class="result">
+
         <h3>Book Not Found</h3>
 
         <table>
@@ -104,6 +105,34 @@
     </div>
 
     {% endif %}
+
+    <!-- NEW SECTION FOR COMMIT 1 -->
+
+    <div class="sorting-section">
+
+        <h2>Sorting Analysis</h2>
+
+        <p class="sorting-text">
+            Compare the performance of Bubble Sort and Merge Sort
+            on the Smart Book Retrieval database.
+        </p>
+
+        <label>Sort Books By</label>
+
+        <select disabled>
+            <option>Book Title</option>
+            <option>Author Name</option>
+        </select>
+
+        <button type="button" disabled>
+            Compare Algorithms
+        </button>
+
+        <div class="sorting-placeholder">
+            Sorting comparison feature coming soon...
+        </div>
+
+    </div>
 
 </div>
 

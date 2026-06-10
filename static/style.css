@@ -126,3 +126,29 @@ p {
     color: #3f3f3f;
     line-height: 1.6;
 }
+
+.sorting-section {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 2px solid #c9b79c;
+}
+
+.sorting-section h2 {
+    color: #4a3728;
+    margin-bottom: 10px;
+}
+
+.sorting-text {
+    color: #6f4e37;
+    margin-bottom: 15px;
+}
+
+.sorting-placeholder {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f4ede3;
+    border-radius: 10px;
+    color: #6f4e37;
+    text-align: center;
+    font-style: italic;
+}
