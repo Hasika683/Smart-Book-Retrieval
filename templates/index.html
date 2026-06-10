@@ -10,7 +10,11 @@
 
     <h1>Smart Book Retrieval System</h1>
 
+    <!-- SEARCH SECTION -->
+
     <form method="POST">
+
+        <input type="hidden" name="action" value="search">
 
         <label>Search By:</label>
 
@@ -32,7 +36,9 @@
             required
         >
 
-        <button type="submit">Search</button>
+        <button type="submit">
+            Search
+        </button>
 
     </form>
 
@@ -43,7 +49,6 @@
         <h3>Book Found</h3>
 
         <p><strong>Title:</strong> {{ result.title }}</p>
-
         <p><strong>Author:</strong> {{ result.author }}</p>
 
         <table>
@@ -106,31 +111,69 @@
 
     {% endif %}
 
-    <!-- NEW SECTION FOR COMMIT 1 -->
+    <!-- SORTING SECTION -->
 
     <div class="sorting-section">
 
         <h2>Sorting Analysis</h2>
 
         <p class="sorting-text">
-            Compare the performance of Bubble Sort and Merge Sort
-            on the Smart Book Retrieval database.
+            Compare sorting algorithms on the Smart Book Retrieval database.
         </p>
 
-        <label>Sort Books By</label>
+        <form method="POST">
 
-        <select disabled>
-            <option>Book Title</option>
-            <option>Author Name</option>
-        </select>
+            <input type="hidden" name="action" value="bubble_sort">
 
-        <button type="button" disabled>
-            Compare Algorithms
-        </button>
+            <label>Sort Books By:</label>
 
-        <div class="sorting-placeholder">
-            Sorting comparison feature coming soon...
+            <select name="sort_by">
+                <option value="title">
+                    Book Title
+                </option>
+
+                <option value="author">
+                    Author Name
+                </option>
+            </select>
+
+            <button type="submit">
+                Run Bubble Sort
+            </button>
+
+        </form>
+
+        {% if sorted_books_result %}
+
+        <div class="result">
+
+            <h3>Bubble Sorted Books</h3>
+
+            <table>
+
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                </tr>
+
+                {% for book in sorted_books_result %}
+
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+            <p class="conclusion">
+                Bubble Sort Completed Successfully
+            </p>
+
         </div>
+
+        {% endif %}
 
     </div>
 

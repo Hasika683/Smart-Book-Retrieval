@@ -59,54 +59,106 @@ def linear_search(book_list, query, search_by):
 
 def binary_search(sorted_list, query):
     low, high = 0, len(sorted_list) - 1
+
     while low <= high:
         mid = (low + high) // 2
         mid_title = sorted_list[mid]["title"].lower()
+
         if mid_title == query.lower():
             return sorted_list[mid]
+
         elif mid_title < query.lower():
             low = mid + 1
+
         else:
             high = mid - 1
+
     return None
+
+def bubble_sort_books(book_list, sort_by):
+    sorted_list = book_list.copy()
+
+    n = len(sorted_list)
+
+    for i in range(n):
+        for j in range(0, n - i - 1):
+
+            if sorted_list[j][sort_by].lower() > sorted_list[j + 1][sort_by].lower():
+
+                sorted_list[j], sorted_list[j + 1] = (
+                    sorted_list[j + 1],
+                    sorted_list[j]
+                )
+
+    return sorted_list
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+
     result = None
     linear_time = None
     binary_time = None
     conclusion = None
+    sorted_books_result = None
+
     query = ""
     search_by = "title"
 
     if request.method == "POST":
-        query = request.form.get("query", "").strip()
-        search_by = request.form.get("search_by", "title")
 
-        start = time.perf_counter()
-        result = linear_search(books, query, search_by)
-        linear_time = round((time.perf_counter() - start) * 1000, 6)
+        action = request.form.get("action", "search")
 
-        if search_by == "title":
-            start = time.perf_counter()
-            binary_search(sorted_books, query)
-            binary_time = round((time.perf_counter() - start) * 1000, 6)
+        if action == "bubble_sort":
 
-        if binary_time is not None:
-            if binary_time < linear_time:
-                conclusion = "Binary Search is faster!"
-            else:
-                conclusion = "Linear Search is faster this time!"
+            sort_by = request.form.get("sort_by", "title")
+
+            sorted_books_result = bubble_sort_books(
+                books,
+                sort_by
+            )
+
         else:
-            conclusion = "Only Linear Search works for author search."
 
-    return render_template("index.html",
+            query = request.form.get("query", "").strip()
+            search_by = request.form.get("search_by", "title")
+
+            start = time.perf_counter()
+            result = linear_search(books, query, search_by)
+            linear_time = round(
+                (time.perf_counter() - start) * 1000,
+                6
+            )
+
+            if search_by == "title":
+
+                start = time.perf_counter()
+                binary_search(sorted_books, query)
+
+                binary_time = round(
+                    (time.perf_counter() - start) * 1000,
+                    6
+                )
+
+            if binary_time is not None:
+
+                if binary_time < linear_time:
+                    conclusion = "Binary Search is faster!"
+
+                else:
+                    conclusion = "Linear Search is faster this time!"
+
+            else:
+                conclusion = "Only Linear Search works for author search."
+
+    return render_template(
+        "index.html",
         result=result,
         linear_time=linear_time,
         binary_time=binary_time,
         conclusion=conclusion,
         query=query,
-        search_by=search_by
+        search_by=search_by,
+        sorted_books_result=sorted_books_result
     )
 
 if __name__ == "__main__":
