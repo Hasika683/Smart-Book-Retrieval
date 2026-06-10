@@ -27,29 +27,16 @@ books = [
     {"title": "Hamlet", "author": "William Shakespeare"},
     {"title": "Macbeth", "author": "William Shakespeare"},
     {"title": "Romeo and Juliet", "author": "William Shakespeare"},
-    {"title": "Othello", "author": "William Shakespeare"},
     {"title": "Moby Dick", "author": "Herman Melville"},
-    {"title": "Frankenstein", "author": "Mary Shelley"},
-    {"title": "Dracula", "author": "Bram Stoker"},
-    {"title": "Alice in Wonderland", "author": "Lewis Carroll"},
-    {"title": "Little Women", "author": "Louisa May Alcott"},
-    {"title": "Gone with the Wind", "author": "Margaret Mitchell"},
-    {"title": "The Grapes of Wrath", "author": "John Steinbeck"},
-    {"title": "Of Mice and Men", "author": "John Steinbeck"},
-    {"title": "The Old Man and the Sea", "author": "Ernest Hemingway"},
-    {"title": "A Farewell to Arms", "author": "Ernest Hemingway"},
-    {"title": "Catch-22", "author": "Joseph Heller"},
-    {"title": "The Bell Jar", "author": "Sylvia Plath"},
-    {"title": "Beloved", "author": "Toni Morrison"},
-    {"title": "Invisible Man", "author": "Ralph Ellison"},
-    {"title": "The Color Purple", "author": "Alice Walker"},
-    {"title": "Smart Book Retrieval", "author": "Sravya & Hasika"},
+    {"title": "Smart Book Retrieval", "author": "Sravya & Hasika"}
 ]
 
 sorted_books = sorted(books, key=lambda b: b["title"].lower())
 
+
 def normalize(text):
     return text.lower().replace(".", "").replace(" ", "")
+
 
 def linear_search(book_list, query, search_by):
     for book in book_list:
@@ -57,8 +44,10 @@ def linear_search(book_list, query, search_by):
             return book
     return None
 
+
 def binary_search(sorted_list, query):
-    low, high = 0, len(sorted_list) - 1
+    low = 0
+    high = len(sorted_list) - 1
 
     while low <= high:
         mid = (low + high) // 2
@@ -75,22 +64,54 @@ def binary_search(sorted_list, query):
 
     return None
 
-def bubble_sort_books(book_list, sort_by):
-    sorted_list = book_list.copy()
 
-    n = len(sorted_list)
+def bubble_sort_books(book_list, sort_by):
+    arr = book_list.copy()
+    n = len(arr)
 
     for i in range(n):
         for j in range(0, n - i - 1):
 
-            if sorted_list[j][sort_by].lower() > sorted_list[j + 1][sort_by].lower():
+            if arr[j][sort_by].lower() > arr[j + 1][sort_by].lower():
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
 
-                sorted_list[j], sorted_list[j + 1] = (
-                    sorted_list[j + 1],
-                    sorted_list[j]
-                )
+    return arr
 
-    return sorted_list
+
+def merge_sort_books(book_list, sort_by):
+
+    if len(book_list) <= 1:
+        return book_list
+
+    mid = len(book_list) // 2
+
+    left = merge_sort_books(book_list[:mid], sort_by)
+    right = merge_sort_books(book_list[mid:], sort_by)
+
+    return merge(left, right, sort_by)
+
+
+def merge(left, right, sort_by):
+
+    result = []
+
+    i = 0
+    j = 0
+
+    while i < len(left) and j < len(right):
+
+        if left[i][sort_by].lower() <= right[j][sort_by].lower():
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+
+    return result
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -99,7 +120,10 @@ def index():
     linear_time = None
     binary_time = None
     conclusion = None
-    sorted_books_result = None
+
+    bubble_time = None
+    merge_time = None
+    sort_conclusion = None
 
     query = ""
     search_by = "title"
@@ -108,22 +132,43 @@ def index():
 
         action = request.form.get("action", "search")
 
-        if action == "bubble_sort":
+        # SORTING COMPARISON
+        if action == "compare_sorts":
 
             sort_by = request.form.get("sort_by", "title")
 
-            sorted_books_result = bubble_sort_books(
-                books,
-                sort_by
+            start = time.perf_counter()
+            bubble_sort_books(books, sort_by)
+            bubble_time = round(
+                (time.perf_counter() - start) * 1000,
+                6
             )
 
+            start = time.perf_counter()
+            merge_sort_books(books, sort_by)
+            merge_time = round(
+                (time.perf_counter() - start) * 1000,
+                6
+            )
+
+            if merge_time < bubble_time:
+                sort_conclusion = "Merge Sort is faster!"
+            else:
+                sort_conclusion = "Bubble Sort is faster!"
+
+        # SEARCH COMPARISON
         else:
 
             query = request.form.get("query", "").strip()
             search_by = request.form.get("search_by", "title")
 
             start = time.perf_counter()
-            result = linear_search(books, query, search_by)
+            result = linear_search(
+                books,
+                query,
+                search_by
+            )
+
             linear_time = round(
                 (time.perf_counter() - start) * 1000,
                 6
@@ -132,7 +177,11 @@ def index():
             if search_by == "title":
 
                 start = time.perf_counter()
-                binary_search(sorted_books, query)
+
+                binary_search(
+                    sorted_books,
+                    query
+                )
 
                 binary_time = round(
                     (time.perf_counter() - start) * 1000,
@@ -143,7 +192,6 @@ def index():
 
                 if binary_time < linear_time:
                     conclusion = "Binary Search is faster!"
-
                 else:
                     conclusion = "Linear Search is faster this time!"
 
@@ -158,8 +206,11 @@ def index():
         conclusion=conclusion,
         query=query,
         search_by=search_by,
-        sorted_books_result=sorted_books_result
+        bubble_time=bubble_time,
+        merge_time=merge_time,
+        sort_conclusion=sort_conclusion
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,183 +1,176 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Smart Book Retrieval System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <h1>Smart Book Retrieval System</h1>
+        <h1>Smart Book Retrieval System</h1>
 
-    <!-- SEARCH SECTION -->
-
-    <form method="POST">
-
-        <input type="hidden" name="action" value="search">
-
-        <label>Search By:</label>
-
-        <select name="search_by">
-            <option value="title" {% if search_by=="title" %}selected{% endif %}>
-                Book Title
-            </option>
-
-            <option value="author" {% if search_by=="author" %}selected{% endif %}>
-                Author
-            </option>
-        </select>
-
-        <input
-            type="text"
-            name="query"
-            placeholder="Enter Book Title or Author"
-            value="{{ query }}"
-            required
-        >
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-    {% if result %}
-
-    <div class="result">
-
-        <h3>Book Found</h3>
-
-        <p><strong>Title:</strong> {{ result.title }}</p>
-        <p><strong>Author:</strong> {{ result.author }}</p>
-
-        <table>
-            <tr>
-                <th>Algorithm</th>
-                <th>Time Complexity</th>
-                <th>Time Taken (ms)</th>
-            </tr>
-
-            <tr>
-                <td>Linear Search</td>
-                <td>O(n)</td>
-                <td>{{ linear_time }}</td>
-            </tr>
-
-            {% if binary_time is not none %}
-            <tr>
-                <td>Binary Search</td>
-                <td>O(log n)</td>
-                <td>{{ binary_time }}</td>
-            </tr>
-            {% endif %}
-        </table>
-
-        <p class="conclusion">{{ conclusion }}</p>
-
-    </div>
-
-    {% elif linear_time is not none %}
-
-    <div class="result">
-
-        <h3>Book Not Found</h3>
-
-        <table>
-            <tr>
-                <th>Algorithm</th>
-                <th>Time Complexity</th>
-                <th>Time Taken (ms)</th>
-            </tr>
-
-            <tr>
-                <td>Linear Search</td>
-                <td>O(n)</td>
-                <td>{{ linear_time }}</td>
-            </tr>
-
-            {% if binary_time is not none %}
-            <tr>
-                <td>Binary Search</td>
-                <td>O(log n)</td>
-                <td>{{ binary_time }}</td>
-            </tr>
-            {% endif %}
-        </table>
-
-        <p class="conclusion">{{ conclusion }}</p>
-
-    </div>
-
-    {% endif %}
-
-    <!-- SORTING SECTION -->
-
-    <div class="sorting-section">
-
-        <h2>Sorting Analysis</h2>
-
-        <p class="sorting-text">
-            Compare sorting algorithms on the Smart Book Retrieval database.
-        </p>
+        <!-- SEARCH SECTION -->
 
         <form method="POST">
 
-            <input type="hidden" name="action" value="bubble_sort">
+            <input type="hidden" name="action" value="search">
 
-            <label>Sort Books By:</label>
+            <label>Search By:</label>
 
-            <select name="sort_by">
-                <option value="title">
+            <select name="search_by">
+                <option value="title" {% if search_by=="title" %}selected{% endif %}>
                     Book Title
                 </option>
 
-                <option value="author">
-                    Author Name
+                <option value="author" {% if search_by=="author" %}selected{% endif %}>
+                    Author
                 </option>
             </select>
 
+            <input type="text" name="query" placeholder="Enter Book Title or Author" value="{{ query }}" required>
+
             <button type="submit">
-                Run Bubble Sort
+                Search
             </button>
 
         </form>
 
-        {% if sorted_books_result %}
+        {% if result %}
 
         <div class="result">
 
-            <h3>Bubble Sorted Books</h3>
+            <h3>Book Found</h3>
+
+            <p><strong>Title:</strong> {{ result.title }}</p>
+            <p><strong>Author:</strong> {{ result.author }}</p>
 
             <table>
-
                 <tr>
-                    <th>Book Title</th>
-                    <th>Author</th>
+                    <th>Algorithm</th>
+                    <th>Time Complexity</th>
+                    <th>Time Taken (ms)</th>
                 </tr>
 
-                {% for book in sorted_books_result %}
-
                 <tr>
-                    <td>{{ book.title }}</td>
-                    <td>{{ book.author }}</td>
+                    <td>Linear Search</td>
+                    <td>O(n)</td>
+                    <td>{{ linear_time }}</td>
                 </tr>
 
-                {% endfor %}
-
+                {% if binary_time is not none %}
+                <tr>
+                    <td>Binary Search</td>
+                    <td>O(log n)</td>
+                    <td>{{ binary_time }}</td>
+                </tr>
+                {% endif %}
             </table>
 
-            <p class="conclusion">
-                Bubble Sort Completed Successfully
-            </p>
+            <p class="conclusion">{{ conclusion }}</p>
+
+        </div>
+
+        {% elif linear_time is not none %}
+
+        <div class="result">
+
+            <h3>Book Not Found</h3>
+
+            <table>
+                <tr>
+                    <th>Algorithm</th>
+                    <th>Time Complexity</th>
+                    <th>Time Taken (ms)</th>
+                </tr>
+
+                <tr>
+                    <td>Linear Search</td>
+                    <td>O(n)</td>
+                    <td>{{ linear_time }}</td>
+                </tr>
+
+                {% if binary_time is not none %}
+                <tr>
+                    <td>Binary Search</td>
+                    <td>O(log n)</td>
+                    <td>{{ binary_time }}</td>
+                </tr>
+                {% endif %}
+            </table>
+
+            <p class="conclusion">{{ conclusion }}</p>
 
         </div>
 
         {% endif %}
 
+        <div class="sorting-section">
+
+            <h2>Sorting Analysis</h2>
+
+            <p class="sorting-text">
+                Compare Bubble Sort and Merge Sort on the Smart Book Retrieval database.
+            </p>
+
+            <form method="POST">
+
+                <input type="hidden" name="action" value="compare_sorts">
+
+                <label>Sort Books By:</label>
+
+                <select name="sort_by">
+                    <option value="title">Book Title</option>
+                    <option value="author">Author Name</option>
+                </select>
+
+                <button type="submit">
+                    Compare Sorting Algorithms
+                </button>
+
+            </form>
+
+            {% if bubble_time is not none %}
+
+            <div class="result">
+
+                <h3>Sorting Performance Comparison</h3>
+
+                <table>
+                    <tr>
+                        <th>Algorithm</th>
+                        <th>Time Complexity</th>
+                        <th>Time Taken (ms)</th>
+                    </tr>
+
+                    <tr>
+                        <td>Bubble Sort</td>
+                        <td>O(n²)</td>
+                        <td>{{ bubble_time }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Merge Sort</td>
+                        <td>O(n log n)</td>
+                        <td>{{ merge_time }}</td>
+                    </tr>
+
+                </table>
+
+                <p class="conclusion">
+                    {{ sort_conclusion }}
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
     </div>
 
-</div>
-
 </body>
+
 </html>
